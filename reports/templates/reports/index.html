@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+
+{% block title %}Financial Dashboard - Budget Tracker{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-8">
+        <h1 class="display-5 fw-bold text-primary">Financial Dashboard</h1>
+        <p class="text-secondary">Overview of your financial health</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'export_csv' %}" class="btn btn-success">
+            <i class="fas fa-file-csv me-2"></i>Export Data
+        </a>
+    </div>
+</div>
+
+<!-- Budget vs Actuals Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h3 class="mb-4 fw-bold">Budget Analysis</h3>
+    </div>
+    {% for budget in budget_data %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title mb-0">{{ budget.category }}</h5>
+                    {% if budget.is_exceeded %}
+                    <span class="badge bg-danger">Over Budget</span>
+                    {% else %}
+                    <span class="badge bg-success">On Track</span>
+                    {% endif %}
+                </div>
+
+                <div class="d-flex justify-content-between text-muted small mb-1">
+                    <span>Spent: ₹{{ budget.spent|floatformat:2 }}</span>
+                    <span>Limit: ₹{{ budget.limit|floatformat:2 }}</span>
+                </div>
+
+                <div class="progress mb-3" style="height: 10px;">
+                    <div class="progress-bar {% if budget.is_exceeded %}bg-danger{% else %}bg-primary{% endif %}"
+                        role="progressbar" style="width: {{ budget.percent }}%;" aria-valuenow="{{ budget.percent }}"
+                        aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+
+                <p class="small text-muted mb-0">
+                    {% if budget.is_exceeded %}
+                    Exceeded by <span class="text-danger fw-bold">₹{{ budget.over_amount|floatformat:2 }}</span>
+                    {% else %}
+                    Remaining: <span class="text-success fw-bold">₹{{ budget.remaining|floatformat:2 }}</span>
+                    {% endif %}
+                </p>
+                <div class="text-muted small mt-2">
+                    <i class="far fa-calendar-alt me-1"></i> {{ budget.start_date }} - {{ budget.end_date }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i> No active budgets found. <a href="{% url 'set_budget' %}">Set a
+                budget</a> to track your spending.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Charts Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h3 class="mb-4 fw-bold">Visual Analytics</h3>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Expense by Category</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="expenseCategoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Income vs Expense (6 Months)</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="incomeExpenseChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Detailed Breakdown Section -->
+<div class="row">
+    <div class="col-12">
+        <h3 class="mb-4 fw-bold">Detailed Breakdown</h3>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0 text-primary">Income Sources</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Source</th>
+                                <th class="text-end">Total Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for income in income_breakdown %}
+                            <tr>
+                                <td>{{ income.source__name }}</td>
+                                <td class="text-end text-success fw-bold">+₹{{ income.total|floatformat:2 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="2" class="text-center text-muted">No income records</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0 text-danger">Expense Categories</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Category</th>
+                                <th class="text-end">Total Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for expense in expense_breakdown %}
+                            <tr>
+                                <td>{{ expense.category__name }}</td>
+                                <td class="text-end text-danger fw-bold">-₹{{ expense.total|floatformat:2 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="2" class="text-center text-muted">No expense records</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Expense by Category Chart
+        fetch('{% url "expense_category_data" %}')
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById('expenseCategoryChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            data: data.data,
+                            backgroundColor: [
+                                '#4361ee', '#3f37c9', '#4cc9f0', '#f72585', '#b5179e', '#7209b7',
+                                '#fca311', '#e09f3e', '#9d0208', '#2ec4b6', '#06d6a0', '#118ab2'
+                            ],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    font: {
+                                        family: "'Outfit', sans-serif"
+                                    }
+                                }
+                            }
+                        },
+                        cutout: '70%',
+                    }
+                });
+            });
+
+        // Income vs Expense Chart
+        fetch('{% url "income_expense_data" %}')
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.labels,
+                        datasets: [
+                            {
+                                label: 'Income',
+                                data: data.income,
+                                backgroundColor: '#4cc9f0',
+                                borderRadius: 5,
+                            },
+                            {
+                                label: 'Expense',
+                                data: data.expense,
+                                backgroundColor: '#f72585',
+                                borderRadius: 5,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    drawBorder: false,
+                                    color: 'rgba(0,0,0,0.05)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    font: {
+                                        family: "'Outfit', sans-serif"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+    });
+</script>
+{% endblock %}
