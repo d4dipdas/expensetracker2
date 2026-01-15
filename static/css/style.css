@@ -1,0 +1,285 @@
+:root {
+    /* Vibrant Color Palette */
+    --primary-color: #6246ea;
+    /* Vivid Purple */
+    --secondary-color: #e45858;
+    /* Catchy Red-Orange */
+    --accent-color: #3ddc84;
+    /* Android Green for success pop */
+    --text-primary: #2b2c34;
+    --text-secondary: #8d99ae;
+    --bg-gradient: linear-gradient(135deg, #fffffe 0%, #f0f4ef 100%);
+
+    /* Functional Colors */
+    --success-bg: #d4edda;
+    --success-text: #155724;
+    --danger-bg: #f8d7da;
+    --danger-text: #721c24;
+    --warning-bg: #fff3cd;
+    --warning-text: #856404;
+
+    /* Glassmorphism Variables */
+    --glass-bg: rgba(255, 255, 255, 0.75);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.3);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+    --backdrop-blur: blur(12px);
+
+    --border-radius: 20px;
+    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+body {
+    font-family: 'Outfit', 'Inter', sans-serif;
+    /* Animated Gradient Background */
+    background: linear-gradient(-45deg,
+            #ee7752,
+            #e73c7e,
+            #23a6d5,
+            #23d5ab);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Base Styles */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #2b2c34;
+}
+
+/* Navbar Modernization */
+.navbar {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 0.8rem 0;
+}
+
+.navbar-brand {
+    font-weight: 800;
+    font-size: 1.6rem;
+    background: linear-gradient(135deg, #6246ea 0%, #e45858 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+}
+
+.nav-link {
+    font-weight: 600;
+    color: #4a5568 !important;
+    /* Slightly softer than pure black */
+    padding: 0.6rem 1rem !important;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    margin: 0 4px;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background: linear-gradient(135deg, rgba(98, 70, 234, 0.1) 0%, rgba(228, 88, 88, 0.1) 100%);
+    color: #6246ea !important;
+    transform: translateY(-1px);
+}
+
+.dropdown-menu {
+    border: none;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    margin-top: 10px;
+    padding: 0.5rem;
+}
+
+.dropdown-item {
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s;
+}
+
+.dropdown-item:hover {
+    background: rgba(98, 70, 234, 0.05);
+    color: #6246ea;
+    padding-left: 1.2rem;
+    /* Slide effect */
+}
+
+/* Glassmorphism Cards */
+.card {
+    background: var(--glass-bg);
+    backdrop-filter: var(--backdrop-blur);
+    border: var(--glass-border);
+    border-radius: var(--border-radius);
+    box-shadow: var(--glass-shadow);
+    transition: var(--transition);
+}
+
+.card:hover {
+    transform: translateY(-5px) scale(1.005);
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.1);
+    border-color: rgba(98, 70, 234, 0.2);
+}
+
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-weight: 700;
+    padding: 1.5rem;
+    color: var(--primary-color);
+}
+
+/* Vibrant Buttons */
+.btn {
+    border-radius: 12px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    border: none;
+    transition: var(--transition);
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #6246ea 0%, #7b2cbf 100%);
+    color: white;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #3ddc84 0%, #2a9d8f 100%);
+    color: #0f3d24;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #e45858 0%, #d62828 100%);
+    color: white;
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #ffc857 0%, #e7bb41 100%);
+    color: #3e3006;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+    filter: brightness(110%);
+}
+
+/* Table Enhancements */
+.table {
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    /* Gap between rows */
+}
+
+.table thead th {
+    border: none;
+    color: var(--text-secondary);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05rem;
+    padding: 1rem;
+}
+
+.table tbody tr {
+    background: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+    border-radius: 10px;
+    transition: var(--transition);
+}
+
+.table tbody tr:hover {
+    transform: scale(1.01);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.table td {
+    border: none;
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table tbody tr td:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.table tbody tr td:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+/* Badge Styling */
+.badge {
+    padding: 0.5em 1em;
+    border-radius: 50px;
+    /* Pill shape */
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Chart Canvas Container */
+canvas {
+    padding: 10px;
+    border-radius: 12px;
+}
+
+/* Animation Utilities */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.fade-in-row {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Fix main container for fixed navbar */
+.main-container {
+    margin-top: 90px !important;
+}
+
+/* HTMX Swapping */
+.htmx-swapping tr {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: all 0.4s ease-out;
+}
