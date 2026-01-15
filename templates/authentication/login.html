@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Budget Tracker{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5 col-lg-4">
+        <div class="card border-0 shadow-lg" style="backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.9);">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                        style="width: 64px; height: 64px; font-size: 1.5rem;">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark">Welcome Back</h3>
+                    <p class="text-muted small">Sign in to continue to your dashboard</p>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="username"
+                            class="form-label fw-bold small text-uppercase text-muted">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i
+                                    class="fas fa-user"></i></span>
+                            <input type="text" class="form-control border-start-0 ps-0 bg-light" id="username"
+                                name="username" placeholder="Enter your username" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password"
+                            class="form-label fw-bold small text-uppercase text-muted">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i
+                                    class="fas fa-lock"></i></span>
+                            <input type="password" class="form-control border-start-0 ps-0 bg-light" id="password"
+                                name="password" placeholder="Enter your password" required>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mb-4">
+                        <button type="submit" class="btn btn-primary py-2 fw-bold shadow-sm">
+                            Sign In <i class="fas fa-arrow-right ms-2 small"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center pt-3 border-top">
+                    <p class="mb-0 text-muted">Don't have an account? <a href="{% url 'register' %}"
+                            class="text-primary fw-bold text-decoration-none">Register here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

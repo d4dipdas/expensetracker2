@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        padding: 80px 0;
+        border-radius: 24px;
+        margin-bottom: 60px;
+    }
+
+    .hero-title {
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        background: linear-gradient(to right, #111827, #374151);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .feature-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    }
+
+    .icon-box {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .icon-indigo {
+        background: rgba(79, 70, 229, 0.1);
+        color: #4f46e5;
+    }
+
+    .icon-emerald {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+
+    .icon-rose {
+        background: rgba(225, 29, 72, 0.1);
+        color: #e11d48;
+    }
+
+    .cta-section {
+        background: #111827;
+        border-radius: 24px;
+        padding: 60px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-circle {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+    }
+</style>
+
+<!-- Hero Section -->
+<div class="hero-section text-center shadow-sm">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <span
+                    class="badge bg-primary bg-opacity-10 text-primary text-uppercase fw-bold mb-3 px-3 py-2 rounded-pill small">
+                    Smart Financial Management
+                </span>
+                <h1 class="display-3 hero-title mb-4">Master Your Money with Confidence</h1>
+                <p class="lead text-muted mb-5 px-lg-5">
+                    Track expenses, set monthly budgets, and visualize your financial health with our intuitive and
+                    professional budget tracker.
+                </p>
+                {% if not user.is_authenticated %}
+                <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+                    <a class="btn btn-primary btn-lg px-5 py-3 fw-bold shadow-lg" href="{% url 'register' %}">
+                        Get Started Free
+                    </a>
+                    <a class="btn btn-outline-secondary btn-lg px-5 py-3 fw-bold" href="{% url 'login' %}">
+                        Sign In
+                    </a>
+                </div>
+                {% else %}
+                <a class="btn btn-primary btn-lg px-5 py-3 fw-bold shadow-lg" href="{% url 'dashboard' %}">
+                    <i class="fas fa-th-large me-2"></i>Go to Dashboard
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Grid -->
+<div class="container mb-5">
+    <div class="row g-4">
+        <!-- Feature 1 -->
+        <div class="col-md-4">
+            <div class="card h-100 bg-white shadow-sm feature-card border-0 rounded-4 p-4 text-center">
+                <div class="card-body">
+                    <div class="icon-box icon-indigo mx-auto">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Track Expenses</h4>
+                    <p class="text-muted mb-0">
+                        Effortlessly log daily expenses properly organized by category to see exactly where your money
+                        goes.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="col-md-4">
+            <div class="card h-100 bg-white shadow-sm feature-card border-0 rounded-4 p-4 text-center">
+                <div class="card-body">
+                    <div class="icon-box icon-emerald mx-auto">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Visual Insights</h4>
+                    <p class="text-muted mb-0">
+                        Understand spending patterns with interactive charts and comprehensive visual reports.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="col-md-4">
+            <div class="card h-100 bg-white shadow-sm feature-card border-0 rounded-4 p-4 text-center">
+                <div class="card-body">
+                    <div class="icon-box icon-rose mx-auto">
+                        <i class="fas fa-piggy-bank"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Smart Budgeting</h4>
+                    <p class="text-muted mb-0">
+                        Set realistic monthly limits for categories and get alerts to stay on track with your goals.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bottom CTA -->
+{% if not user.is_authenticated %}
+<div class="container mb-5">
+    <div class="cta-section text-center text-white">
+        <!-- Decorative circles -->
+        <div class="cta-circle" style="width: 200px; height: 200px; top: -50px; left: -50px;"></div>
+        <div class="cta-circle" style="width: 150px; height: 150px; bottom: -30px; right: -30px;"></div>
+
+        <div class="position-relative">
+            <h2 class="fw-bold mb-4">Ready to take control?</h2>
+            <p class="lead text-white-50 mb-4 col-lg-8 mx-auto">
+                Join thousands of users who are already saving more and spending smarter with Budget Tracker.
+            </p>
+            <a href="{% url 'register' %}" class="btn btn-light btn-lg px-5 py-3 fw-bold text-dark shadow">
+                Create Free Account
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

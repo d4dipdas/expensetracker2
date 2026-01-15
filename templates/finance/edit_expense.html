@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Expense - Budget Tracker{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card border-0 shadow-lg" style="backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.9);">
+            <div class="card-header bg-transparent border-0 pt-4 pb-0 text-center">
+                <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                    style="width: 50px; height: 50px; font-size: 1.25rem;">
+                    <i class="fas fa-edit"></i>
+                </div>
+                <h4 class="card-title fw-bold">Edit Expense</h4>
+            </div>
+
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                    <div class="mb-4">
+                        <label for="{{ field.id_for_label }}"
+                            class="form-label fw-bold small text-uppercase text-muted">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                        <div class="form-text small opacity-75">{{ field.help_text }}</div>
+                        {% endif %}
+                        {% for error in field.errors %}
+                        <div class="text-danger small mt-1"><i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+
+                    <div class="d-grid gap-2 mt-5">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <a href="{% url 'list_expenses' %}"
+                                    class="btn btn-outline-secondary w-100 fw-bold">Cancel</a>
+                            </div>
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-danger w-100 fw-bold shadow-sm">
+                                    <i class="fas fa-save me-2"></i>Update
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('input, select, textarea').forEach(input => {
+        input.classList.add('form-control', 'bg-light');
+    });
+</script>
+{% endblock %}

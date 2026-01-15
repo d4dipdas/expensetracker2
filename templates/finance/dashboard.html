@@ -1,0 +1,352 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Budget Tracker{% endblock %}
+
+{% block content %}
+<style>
+    /* Custom refined palette for dashboard */
+    .text-emerald {
+        color: #10b981 !important;
+    }
+
+    .bg-emerald-subtle {
+        background-color: rgba(16, 185, 129, 0.1) !important;
+    }
+
+    .border-emerald {
+        border-color: #10b981 !important;
+    }
+
+    .text-rose {
+        color: #e11d48 !important;
+    }
+
+    .bg-rose-subtle {
+        background-color: rgba(225, 29, 72, 0.1) !important;
+    }
+
+    .border-rose {
+        border-color: #e11d48 !important;
+    }
+
+    .text-indigo {
+        color: #4f46e5 !important;
+    }
+
+    .bg-indigo-subtle {
+        background-color: rgba(79, 70, 229, 0.1) !important;
+    }
+
+    .border-indigo {
+        border-color: #4f46e5 !important;
+    }
+
+    .card-icon {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        font-size: 1.25rem;
+    }
+
+    .table th {
+        font-weight: 600;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+    }
+</style>
+
+<div class="row mb-4 align-items-center">
+    <div class="col-md-6">
+        <h2 class="fw-bold mb-1">Dashboard</h2>
+        <p class="text-muted mb-0">Overview of your personal finances</p>
+    </div>
+    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+        <div class="btn-group shadow-sm">
+            <a href="{% url 'export_excel' %}" class="btn btn-outline-success border-2 fw-medium">
+                <i class="fas fa-file-excel me-2"></i>Export Excel
+            </a>
+            <a href="{% url 'export_pdf' %}" class="btn btn-outline-danger border-2 fw-medium">
+                <i class="fas fa-file-pdf me-2"></i>Export PDF
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+    <!-- Income -->
+    <div class="col-md-4 mb-3 mb-md-0">
+        <div class="card border-0 shadow-sm h-100 border-start border-4 border-emerald">
+            <div class="card-body p-4 d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-uppercase text-muted fw-bold small mb-2">Total Income</h6>
+                    <h3 class="fw-bold mb-0 text-dark">₹{{ total_income }}</h3>
+                </div>
+                <div class="card-icon bg-emerald-subtle text-emerald">
+                    <i class="fas fa-arrow-down"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Expenses -->
+    <div class="col-md-4 mb-3 mb-md-0">
+        <div class="card border-0 shadow-sm h-100 border-start border-4 border-rose">
+            <div class="card-body p-4 d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-uppercase text-muted fw-bold small mb-2">Total Expenses</h6>
+                    <h3 class="fw-bold mb-0 text-dark">₹{{ total_expense }}</h3>
+                </div>
+                <div class="card-icon bg-rose-subtle text-rose">
+                    <i class="fas fa-arrow-up"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Balance -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100 border-start border-4 border-indigo">
+            <div class="card-body p-4 d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-uppercase text-muted fw-bold small mb-2">Current Balance</h6>
+                    <h3 class="fw-bold mb-0 text-dark">₹{{ balance }}</h3>
+                </div>
+                <div class="card-icon bg-indigo-subtle text-indigo">
+                    <i class="fas fa-wallet"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Prediction -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm bg-white">
+            <div class="card-body p-4 d-flex flex-column flex-md-row align-items-center justify-content-between">
+                <div class="d-flex align-items-center mb-3 mb-md-0">
+                    <div class="card-icon bg-primary bg-opacity-10 text-primary me-3">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-1">AI Expense Prediction</h5>
+                        <p class="text-muted mb-0 small">Based on your spending habits over the last 3 months.</p>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <h3 class="fw-bold text-primary mb-0">₹{{ predicted_expense }}</h3>
+                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Predicted Next
+                        Month</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div class="row mb-4">
+    <div class="col-md-6 mb-4 mb-md-0">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 py-3">
+                <h6 class="fw-bold mb-0"><i class="fas fa-chart-pie me-2 text-primary"></i>Expenses by Category</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="catChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 py-3">
+                <h6 class="fw-bold mb-0"><i class="fas fa-chart-line me-2 text-primary"></i>Income vs Expense Trend</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="trendChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Transactions -->
+<div class="row">
+    <!-- Recent Incomes -->
+    <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold mb-0">Recent Incomes</h6>
+                <a href="{% url 'list_incomes' %}" class="btn btn-sm btn-light text-muted">View All</a>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_incomes %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="text-uppercase text-muted ps-4">Source</th>
+                                <th class="text-uppercase text-muted">Date</th>
+                                <th class="text-uppercase text-muted text-end pe-4">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for income in recent_incomes %}
+                            <tr>
+                                <td class="ps-4 fw-medium">{{ income.source }}</td>
+                                <td class="text-muted small">{{ income.date }}</td>
+                                <td class="text-end pe-4 fw-bold text-emerald">+₹{{ income.amount }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="p-4 text-center text-muted">
+                    <p class="mb-0">No recent income records found.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Expenses -->
+    <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold mb-0">Recent Expenses</h6>
+                <a href="{% url 'list_expenses' %}" class="btn btn-sm btn-light text-muted">View All</a>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_expenses %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="text-uppercase text-muted ps-4">Category</th>
+                                <th class="text-uppercase text-muted">Date</th>
+                                <th class="text-uppercase text-muted text-end pe-4">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for expense in recent_expenses %}
+                            <tr>
+                                <td class="ps-4 fw-medium">{{ expense.category }}</td>
+                                <td class="text-muted small">{{ expense.date }}</td>
+                                <td class="text-end pe-4 fw-bold text-rose">-₹{{ expense.amount }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="p-4 text-center text-muted">
+                    <p class="mb-0">No recent expense records found.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Configuration for charts
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = '#64748b';
+
+    var catLabels = {{ category_labels_json| safe }};
+    var catValues = {{ category_values_json| safe }};
+    var ctxCat = document.getElementById('catChart').getContext('2d');
+
+    // Professional color palette
+    const colors = [
+        '#4f46e5', // Indigo
+        '#10b981', // Emerald
+        '#e11d48', // Rose
+        '#f59e0b', // Amber
+        '#8b5cf6', // Violet
+        '#06b6d4', // Cyan
+        '#ec4899', // Pink
+        '#6366f1'  // Indigo Light
+    ];
+
+    new Chart(ctxCat, {
+        type: 'doughnut',
+        data: {
+            labels: catLabels,
+            datasets: [{
+                data: catValues,
+                backgroundColor: colors,
+                borderWidth: 0,
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } }
+            },
+            cutout: '70%',
+        }
+    });
+
+    var months = {{ months_labels_json| safe }};
+    var expSeries = {{ monthly_expenses_json| safe }};
+    var incSeries = {{ monthly_incomes_json| safe }};
+    var ctxTrend = document.getElementById('trendChart').getContext('2d');
+
+    new Chart(ctxTrend, {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [
+                {
+                    label: 'Expenses',
+                    data: expSeries,
+                    borderColor: '#e11d48', // Rose
+                    backgroundColor: 'rgba(225, 29, 72, 0.05)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                },
+                {
+                    label: 'Income',
+                    data: incSeries,
+                    borderColor: '#10b981', // Emerald
+                    backgroundColor: 'rgba(16, 185, 129, 0.05)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top', align: 'end', labels: { usePointStyle: true, boxWidth: 8 } }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { borderDash: [2, 4], color: '#f1f5f9', drawBorder: false }
+                },
+                x: {
+                    grid: { display: false, drawBorder: false }
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+        }
+    });
+</script>
+{% endblock %}

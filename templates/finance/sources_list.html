@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Sources - Budget Tracker{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-md-12 d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">Your Sources</h3>
+        <a href="{% url 'add_source' %}" class="btn btn-success">Add Source</a>
+    </div>
+    </div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        {% if sources %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Owner</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in sources %}
+                    <tr>
+                        <td>{{ s.name }}</td>
+                        <td>{% if s.user %}{{ s.user.username }}{% else %}Default{% endif %}</td>
+                        <td class="text-end">
+                            {% if s.user == user %}
+                            <a href="{% url 'edit_source' s.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <form action="{% url 'delete_source' s.id %}" method="post" class="d-inline" onsubmit="return confirm('Delete this source?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                            {% else %}
+                            <span class="text-muted small">Default, not editable</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted mb-0">No sources yet. <a href="{% url 'add_source' %}">Add one</a>.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

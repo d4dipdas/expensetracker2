@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - Budget Tracker{% endblock %}
+
+{% block content %}
+<div class='row justify-content-center'>
+    <div class='col-md-6 col-lg-5'>
+        <div class='card border-0 shadow-lg' style='backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.9);'>
+            <div class='card-body p-5'>
+                <div class='text-center mb-4'>
+                    <div class='bg-success bg-opacity-10 text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3' style='width: 64px; height: 64px; font-size: 1.5rem;'>
+                        <i class='fas fa-user-plus'></i>
+                    </div>
+                    <h3 class='fw-bold text-dark'>Create Account</h3>
+                    <p class='text-muted small'>Start your journey to financial freedom</p>
+                </div>
+
+                <form method='post' action='{% url 'register' %}' novalidate>
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                    <div class='mb-3'>
+                        <label for='{{ field.id_for_label }}' class='form-label fw-bold small text-uppercase text-muted'>{{ field.label }}</label>
+                        <div class='input-group'>
+                            <input type='{{ field.field.widget.input_type }}' 
+                                   name='{{ field.name }}' 
+                                   id='{{ field.id_for_label }}' 
+                                   class='form-control bg-light {% if field.errors %}is-invalid{% endif %}' 
+                                   {% if field.field.required %}required{% endif %}>
+                        </div>
+                        {% if field.help_text %}
+                        <div class='form-text small opacity-75'>{{ field.help_text }}</div>
+                        {% endif %}
+                        {% for error in field.errors %}
+                        <div class='invalid-feedback d-block small'>
+                            {{ error }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+
+                    <div class='d-grid gap-2 my-4'>
+                        <button type='submit' class='btn btn-success py-2 fw-bold shadow-sm'>
+                            Create Account
+                        </button>
+                    </div>
+                </form>
+
+                <div class='text-center pt-3 border-top'>
+                    <p class='mb-0 text-muted'>Already have an account? <a href='{% url 'login' %}' class='text-primary fw-bold text-decoration-none'>Login here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
